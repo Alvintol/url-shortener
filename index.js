@@ -4,6 +4,7 @@ const bodyparser = require('body-parser')
 const mongoose = require('mongoose');
 const express = require('express');
 const cors = require('cors');
+const { generateRandomString } = require('../../lighthouse/dailyTracker/Week_3/tinyApp/helpers');
 const app = express();
 
 // Basic Configuration
@@ -57,6 +58,15 @@ const urlSchema = new mongoose.Schema({
 })
 
 const Url = mongoose.model('Url', urlSchema);
+
+generateRandomString = () => {
+  const charList = "abcdefghijklmnopqrstuvwxyz0123456789";
+  const randomID = [];
+  while (randomID.length < 6) {
+    randomID.push(charList[Math.floor(Math.random() * charList.length)]);
+  };
+  return randomID.join('');
+};
 
 
 app.post('/api/shorturl', (req, res) => {
