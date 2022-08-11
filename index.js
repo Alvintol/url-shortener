@@ -40,10 +40,10 @@ app.get('/api/hello', function (req, res) {
   res.json({ greeting: 'hello API' });
 });
 
-// app.get('/api/:shorturl', (req, res) => {
+app.get('/api/:shorturl', (req, res) => {
 
-//   res.redirect(original_url)
-// })
+  res.redirect(original_url)
+})
 
 const validateUrl = (url) => {
   const urlRegex = /^(?:(?:(?:https?|ftp):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:[/?#]\S*)?$/i;
@@ -80,17 +80,21 @@ const validateRequest = (url) => {
       'https://www.' + validatedUrl
 }
 
-const createAndSaveUrl = (url, shortUrl, done) => {
+const createAndSaveUrl = (url, shortUrl) => {
   const newUrl = new Url({
     original_url: validateRequest(url),
     short_url: shortUrl
   });
 
-  newUrl.save((err, url) => {
-    if (err) return console.error(err);
-    done(null, url)
-  });
+  newUrl.save();
 };
+
+const findUrlByShort = (shortUrl, done) => {
+  Url.find({ short_url: { '$in': shortUrl } }, (err, url) => {
+    if (err) return console.error(err);
+    done(null, url);
+  })
+}
 
 app.post('/api/shorturl', (req, res) => {
 
