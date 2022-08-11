@@ -72,7 +72,12 @@ const createAndSaveUrl = (url) => {
   const newUrl = new Url({
     original_url: url,
     short_url: generateRandomString()
-  })
+  });
+
+  newUrl.save((err, url) => {
+    if (err) return console.error(err);
+    done(null, url)
+  });
 };
 
 app.post('/api/shorturl', (req, res) => {
@@ -81,6 +86,8 @@ app.post('/api/shorturl', (req, res) => {
 
   const original_url = url;
   const short_url = 1;
+
+  createAndSaveUrl(url);
 
   return validate_url(url) ?
     res.json({
