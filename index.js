@@ -1,13 +1,25 @@
 require('dotenv').config();
+const { MongoClient, ServerApiVersion } = require('mongodb');
 const bodyparser = require('body-parser')
 const express = require('express');
 const cors = require('cors');
 const app = express();
 
 // Basic Configuration
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 
 app.use(cors());
+
+const uri = process.env.URL;
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+
+client.connect(err => {
+  const collection = client.db("test").collection("shortURLs");
+
+  if (err) return console.error(err)
+  // perform actions on the collection object
+  client.close();
+});
 
 app.use('/public', express.static(`${process.cwd()}/public`));
 app.use(bodyparser.urlencoded({ extended: false }))
@@ -27,14 +39,6 @@ app.get('/api/hello', function (req, res) {
 });
 
 app.get('/api/:shorturl', (req, res) => {
-
-  // const { shorturl } = req.params;
-  // const { original_url } = req.body;
-
-  console.log('REQPARAMS:', req.params)
-  console.log('REQBODY:', req.body)
-  console.log('REQQUERY:', req.query)
-
 
   res.redirect(original_url)
 })
@@ -59,10 +63,6 @@ app.post('/api/shorturl', (req, res) => {
     })
     :
     res.json({ error: 'invalid url' })
-});
-
-app.listen(port, function () {
-  console.log(`Listening on port ${port}`);
 });
 
 app.listen(port, function () {
