@@ -1,6 +1,7 @@
 require('dotenv').config();
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const bodyparser = require('body-parser')
+const mongoose = require('mongoose');
 const express = require('express');
 const cors = require('cors');
 const app = express();
@@ -12,6 +13,7 @@ app.use(cors());
 
 const uri = process.env.URL;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+mongoose.connect(uri);
 
 client.connect(err => {
   const collection = client.db("test").collection("shortURLs");
@@ -48,6 +50,14 @@ const validate_url = (url) => {
 
   return url_regex.test(url);
 }
+
+const urlSchema = new mongoose.Schema({
+  original_url: String,
+  short_url: String
+})
+
+const Url = mongoose.model('Url', urlSchema);
+
 
 app.post('/api/shorturl', (req, res) => {
 
