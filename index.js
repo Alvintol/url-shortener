@@ -22,9 +22,15 @@ app.get('/api/hello', function (req, res) {
   res.json({ greeting: 'hello API' });
 });
 
+app.get('/api/hello', function (req, res) {
+  res.json({ greeting: 'hello API' });
+});
+
 app.post('/api/shorturl', (req, res) => {
 
-  const original_url = 'https://freeCodeCamp.org';
+  const {url} = req.body;
+
+  const original_url = url;
   const short_url = 1;
 
   res.json({
