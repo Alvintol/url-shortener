@@ -68,6 +68,12 @@ generateRandomString = () => {
   return randomID.join('');
 };
 
+const createAndSaveUrl = (url) => {
+  const newUrl = new Url({
+    original_url: url,
+    short_url: generateRandomString()
+  })
+};
 
 app.post('/api/shorturl', (req, res) => {
 
